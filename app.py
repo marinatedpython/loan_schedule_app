@@ -184,6 +184,31 @@ def construct_loan_schedule(principal, interest_rate, years, repayment_frequency
 		build_schedule.append({'Period': i+1, 'Interest': round(IR * build_schedule[i]['Balance'], 2), 'Principal': round(payment - (IR * build_schedule[i]['Balance']), 2), 'Balance': round(build_schedule[i]['Balance'] - (payment - (IR * build_schedule[i]['Balance'])), 2)})
 	return build_schedule
 
+@app.callback(
+	[
+		Output('loan_schedule_table', 'data'),
+		Output('loan_schedule_table', 'columns'),
+	],
+	[
+		Input('principal', 'value'),
+		Input('interest_rate', 'value'),
+		Input('loan_length', 'value'),
+		Input('repayment_frequency', 'value')
+	]
+)
+def update_data_table(principal, interest_rate, years, repayment_frequency):
+	if principal == None:
+		principal = 0
+	if interest_rate == None or interest_rate == 0:
+		interest_rate = 0.05
+	if years == None or years == 0:
+		years = 1
+	if repayment_frequency == None:
+		repayment_frequency = 'Monthly'
+	data = construct_loan_schedule(principal, interest_rate, years, repayment_frequency)
+	columns = [{'name': 'Period', 'id': 'Period'}, {'name': 'Interest', 'id': 'Interest'}, {'name': 'Principal', 'id': 'Principal'}, {'name': 'Balance', 'id': 'Balance'}]
+	return data, columns
+
 
 @app.callback(
 	Output('amortization_graph', 'figure'),
@@ -218,32 +243,6 @@ def update_graph(data, columns, repayment_frequency, years):
 
 	return {'data': data, 'layout': layout}
 
-
-@app.callback(
-	[
-		Output('loan_schedule_table', 'data'),
-		Output('loan_schedule_table', 'columns'),
-	],
-	[
-		Input('principal', 'value'),
-		Input('interest_rate', 'value'),
-		Input('loan_length', 'value'),
-		Input('repayment_frequency', 'value')
-	]
-)
-def update_data_table(principal, interest_rate, years, repayment_frequency):
-	# Have just put these conditionals in so that you can clear the inputs on debug mode. Dont need them if you turn debug=False.
-	if principal == None:
-		principal = 0
-	if interest_rate == None or interest_rate == 0:
-		interest_rate = 0.05
-	if years == None or years == 0:
-		years = 1
-	if repayment_frequency == None:
-		repayment_frequency = 'Monthly'
-	data = construct_loan_schedule(principal, interest_rate, years, repayment_frequency)
-	columns = [{'name': 'Period', 'id': 'Period'}, {'name': 'Interest', 'id': 'Interest'}, {'name': 'Principal', 'id': 'Principal'}, {'name': 'Balance', 'id': 'Balance'}]
-	return data, columns
 
 
 if __name__ == '__main__':
