@@ -181,7 +181,11 @@ def construct_loan_schedule(principal, interest_rate, years, repayment_frequency
 	payment = calculate_payment(principal, interest_rate, years, repayment_frequency)
 	build_schedule = [{'Period': 0, 'Interest': 0, 'Principal': 0, 'Balance': principal}]
 	for i in range(years * years_to_periods[repayment_frequency]):
-		build_schedule.append({'Period': i+1, 'Interest': round(IR * build_schedule[i]['Balance'], 2), 'Principal': round(payment - (IR * build_schedule[i]['Balance']), 2), 'Balance': round(build_schedule[i]['Balance'] - (payment - (IR * build_schedule[i]['Balance'])), 2)})
+		build_schedule.append(
+			{'Period': i+1, 
+			 'Interest': round(IR * build_schedule[i]['Balance'], 2), 
+			 'Principal': round(payment - (IR * build_schedule[i]['Balance']), 2), 
+			 'Balance': round(build_schedule[i]['Balance'] - (payment - (IR * build_schedule[i]['Balance'])), 2)})
 	return build_schedule
 
 @app.callback(
